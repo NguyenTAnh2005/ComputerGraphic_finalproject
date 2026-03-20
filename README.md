@@ -26,25 +26,55 @@ Dự án này là tiểu luận cuối kỳ nhằm ứng dụng các lý thuyế
    - Các phím số (1-8) để di chuyển Camera focus vào từng hành tinh cụ thể.
 4. **Console UI:** Hiển thị thông số của hành tinh (Khối lượng, Khoảng cách) - Chức năng nâng cao.
 
+## Cấu trúc thư mục
+
+```bash
+├── 📁 Final
+├── 📁 assets
+│   └── 📁 textures
+├── 📁 include
+│   └── ⚡ Planet.h
+├── 📁 packages
+│   ├── 📁 nupengl.core.0.1.0.1
+│   │   └── ⚙️ .signature.p7s
+│   └── 📁 nupengl.core.redist.0.1.0.1
+│       └── ⚙️ .signature.p7s
+├── 📁 src
+│   └── ⚡ main.cpp
+├── ⚙️ .gitattributes
+├── ⚙️ .gitignore
+├── 📄 Final.slnx
+├── 📄 Final.vcxproj
+├── 📄 Final.vcxproj.filters
+├── 📝 README.md
+└── ⚙️ packages.config
+```
+
+
 ## 🗺️ Lộ Trình Phát Triển (Roadmap)
 
 ### **Chặng 1: Thiết kế Kiến trúc OOP & Khởi tạo (Hoàn thành: 20/03/2026)**
+
 - [x] Setup Project Visual Studio C++, tích hợp thư viện `nupengl.core` qua NuGet.
 - [x] Cấu hình Git Repository và `Visual Studio .gitignore`.
 - [ ] Áp dụng Lập trình hướng đối tượng (OOP), định nghĩa `Class Planet` quản lý các thuộc tính độc lập (Bán kính, Khoảng cách, Tốc độ, Màu sắc).
 - [ ] Khởi tạo mảng dữ liệu mô phỏng 8 hành tinh dựa trên tỷ lệ thu nhỏ tương đối từ Wikipedia.
+
 ### **Chặng 2: Rendering & Animation - []Khung xương MVP (Mục tiêu: 22/03/2026)**
+
 - [ ] Áp dụng Ma trận phân cấp (`glPushMatrix`, `glPopMatrix`) để xử lý bài toán hệ quỹ đạo lồng nhau.
 - [ ] Xây dựng hàm `drawOrbit()` sử dụng `GL_LINE_LOOP` để vẽ đường quỹ đạo.
 - [ ] Xây dựng hàm `drawPlanet()` sử dụng `glutSolidSphere` để dựng hình khối cầu.
 - [ ] Sử dụng `glutTimerFunc` tạo vòng lặp thời gian thực (Real-time Animation ~60FPS) mượt mà.
 
 ### **Chặng 3: Camera & Tương tác Người dùng (Mục tiêu Báo cáo Tiến độ 28/03/2026)**
+
 - [ ] Tích hợp Phép chiếu phối cảnh (`gluPerspective`) và Ma trận quan sát (`gluLookAt`).
 - [ ] Bắt sự kiện bàn phím (Phím mũi tên / WASD) để điều khiển Camera bay quanh không gian vũ trụ.
 - [ ] **Tính năng Focus & HUD:** Gắn phím số `1-8` để tự động dịch chuyển Camera bám theo hành tinh tương ứng, đồng thời xuất thông tin khoa học của hành tinh đó ra màn hình Console.
 
 ### **Chặng 4: Illumination & Texture Mapping - []Hoàn thiện Cuối kỳ**
+
 - [ ] Kích hoạt hệ thống Ánh sáng Phong (`GL_LIGHTING`, `GL_LIGHT0`), đặt nguồn sáng tại tâm Mặt Trời.
 - [ ] Cấu hình vật liệu khuếch tán (`GL_DIFFUSE`) để tạo hiện tượng ngày/đêm trên bề mặt hành tinh.
 - [ ] Tích hợp thư viện đọc ảnh (vd: `stb_image.h`) để load bản đồ vệ tinh (`.jpg`).
@@ -57,4 +87,4 @@ Dự án này là tiểu luận cuối kỳ nhằm ứng dụng các lý thuyế
 2. Mở file `SolarSystem_3D.sln` bằng Visual Studio.
 3. Chờ NuGet tự động khôi phục các packages (nupengl).
 4. Nhấn `F5` hoặc nút `Local Windows Debugger` để biên dịch và chạy.
-```
+````
