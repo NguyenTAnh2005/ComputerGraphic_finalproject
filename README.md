@@ -53,27 +53,28 @@ Dự án này là tiểu luận cuối kỳ nhằm ứng dụng các lý thuyế
 
 ## 🗺️ Lộ Trình Phát Triển (Roadmap)
 
-### **Chặng 1: Thiết kế Kiến trúc OOP & Khởi tạo (Hoàn thành: 20/03/2026)**
+### **Chặng 1: Thiết kế Kiến trúc OOP & Khởi tạo **
 
 - [x] Setup Project Visual Studio C++, tích hợp thư viện `nupengl.core` qua NuGet.
 - [x] Cấu hình Git Repository và `Visual Studio .gitignore`.
-- [ ] Áp dụng Lập trình hướng đối tượng (OOP), định nghĩa `Class Planet` quản lý các thuộc tính độc lập (Bán kính, Khoảng cách, Tốc độ, Màu sắc).
-- [ ] Khởi tạo mảng dữ liệu mô phỏng 8 hành tinh dựa trên tỷ lệ thu nhỏ tương đối từ Wikipedia.
+- [x] Áp dụng Lập trình hướng đối tượng (OOP), định nghĩa `Class Planet` quản lý các thuộc tính độc lập (Bán kính, Khoảng cách, Tốc độ, Màu sắc).
+- [x] Khởi tạo mảng dữ liệu mô phỏng 8 hành tinh dựa trên tỷ lệ thu nhỏ tương đối từ Wikipedia.
 
-### **Chặng 2: Rendering & Animation - []Khung xương MVP (Mục tiêu: 22/03/2026)**
+### **Chặng 2: Rendering & Animation - **
 
+- [x] Xây dựng hàm `drawOrbit()` sử dụng `GL_LINE_LOOP` để vẽ đường quỹ đạo.
+- [x] Xây dựng hàm `drawPlanet()` sử dụng `glutSolidSphere` để dựng hình khối cầu.
+- [x] Sử dụng `glutTimerFunc` tạo vòng lặp thời gian thực (Real-time Animation ~60FPS) mượt mà.
 - [ ] Áp dụng Ma trận phân cấp (`glPushMatrix`, `glPopMatrix`) để xử lý bài toán hệ quỹ đạo lồng nhau.
-- [ ] Xây dựng hàm `drawOrbit()` sử dụng `GL_LINE_LOOP` để vẽ đường quỹ đạo.
-- [ ] Xây dựng hàm `drawPlanet()` sử dụng `glutSolidSphere` để dựng hình khối cầu.
-- [ ] Sử dụng `glutTimerFunc` tạo vòng lặp thời gian thực (Real-time Animation ~60FPS) mượt mà.
+- [ ] Vẽ thêm các hành tinh phụ như (the moon, ....)
 
-### **Chặng 3: Camera & Tương tác Người dùng (Mục tiêu Báo cáo Tiến độ 28/03/2026)**
+### **Chặng 3: Camera & Tương tác Người dùng **
 
 - [ ] Tích hợp Phép chiếu phối cảnh (`gluPerspective`) và Ma trận quan sát (`gluLookAt`).
 - [ ] Bắt sự kiện bàn phím (Phím mũi tên / WASD) để điều khiển Camera bay quanh không gian vũ trụ.
 - [ ] **Tính năng Focus & HUD:** Gắn phím số `1-8` để tự động dịch chuyển Camera bám theo hành tinh tương ứng, đồng thời xuất thông tin khoa học của hành tinh đó ra màn hình Console.
 
-### **Chặng 4: Illumination & Texture Mapping - []Hoàn thiện Cuối kỳ**
+### **Chặng 4: Illumination & Texture Mapping **
 
 - [ ] Kích hoạt hệ thống Ánh sáng Phong (`GL_LIGHTING`, `GL_LIGHT0`), đặt nguồn sáng tại tâm Mặt Trời.
 - [ ] Cấu hình vật liệu khuếch tán (`GL_DIFFUSE`) để tạo hiện tượng ngày/đêm trên bề mặt hành tinh.
