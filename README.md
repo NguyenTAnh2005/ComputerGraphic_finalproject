@@ -53,33 +53,64 @@ Dự án này là tiểu luận cuối kỳ nhằm ứng dụng các lý thuyế
 
 ## 🗺️ Lộ Trình Phát Triển (Roadmap)
 
-### **Chặng 1: Thiết kế Kiến trúc OOP & Khởi tạo **
+## 🟢 CHẶNG 1: HOÀN THIỆN LOGIC HỆ THỐNG (THE SKELETON)
+*Mục tiêu: Xử lý triệt để bài toán "thằng này quay quanh thằng kia" bằng Ma trận phân cấp.*
 
-- [x] Setup Project Visual Studio C++, tích hợp thư viện `nupengl.core` qua NuGet.
-- [x] Cấu hình Git Repository và `Visual Studio .gitignore`.
-- [x] Áp dụng Lập trình hướng đối tượng (OOP), định nghĩa `Class Planet` quản lý các thuộc tính độc lập (Bán kính, Khoảng cách, Tốc độ, Màu sắc).
-- [x] Khởi tạo mảng dữ liệu mô phỏng 8 hành tinh dựa trên tỷ lệ thu nhỏ tương đối từ Wikipedia.
+- [x] **OOP Setup:** Khai báo Class `Planet`, quản lý thuộc tính (Radius, Distance, Speed).
+- [x] **Basic Draw:** Vẽ Quỹ đạo (`GL_LINE_LOOP`) và Khối cầu (`glutSolidSphere`).
+- [x] **Frame Control:** Khóa 60 FPS bằng `glutTimerFunc` (mỗi 16ms cập nhật một lần).
+- [x] **Hierarchical Modeling (Nhiệm vụ trọng tâm):** - Áp dụng lồng `glPushMatrix` và `glPopMatrix` để vẽ **Mặt Trăng quay quanh Trái Đất**.
+    - *Logic:* Tọa độ Mặt Trăng phải phụ thuộc vào tọa độ hiện tại của Trái Đất.
+- [ ] **Saturn's Ring:** Sử dụng `gluDisk` để vẽ vành đai bao quanh Sao Thổ.
 
-### **Chặng 2: Rendering & Animation - **
+---
 
-- [x] Xây dựng hàm `drawOrbit()` sử dụng `GL_LINE_LOOP` để vẽ đường quỹ đạo.
-- [x] Xây dựng hàm `drawPlanet()` sử dụng `glutSolidSphere` để dựng hình khối cầu.
-- [x] Sử dụng `glutTimerFunc` tạo vòng lặp thời gian thực (Real-time Animation ~60FPS) mượt mà.
-- [ ] Áp dụng Ma trận phân cấp (`glPushMatrix`, `glPopMatrix`) để xử lý bài toán hệ quỹ đạo lồng nhau.
-- [ ] Vẽ thêm các hành tinh phụ như (the moon, ....)
+## 🟡 CHẶNG 2: CAMERA & TƯƠNG TÁC (THE EYES & HANDS)
+*Mục tiêu: Biến một bức tranh tĩnh thành một vũ trụ có thể khám phá tự do.*
 
-### **Chặng 3: Camera & Tương tác Người dùng **
+- [ ] **Hệ thống Camera 3D:**
+    - Sử dụng `gluLookAt` kết hợp tọa độ cầu ($r, \theta, \phi$) để xoay camera quanh tâm hệ.
+    - Chế độ **Zoom**: Thay đổi khoảng cách camera bằng con lăn chuột hoặc phím `W/S`.
+- [ ] **Keyboard Interaction:**
+    - Điều khiển hướng nhìn bằng phím mũi tên hoặc `A/D`.
+    - Phím `Space`: Tạm dừng/Tiếp tục chuyển động (Pause/Resume).
+- [ ] **Planet Focus Mode (Tính năng Pro):**
+    - Nhấn phím `1-8` để camera "khóa mục tiêu" vào hành tinh tương ứng. 
+    - Khi hành tinh bay, camera tự động bám đuổi theo tọa độ của nó.
 
-- [ ] Tích hợp Phép chiếu phối cảnh (`gluPerspective`) và Ma trận quan sát (`gluLookAt`).
-- [ ] Bắt sự kiện bàn phím (Phím mũi tên / WASD) để điều khiển Camera bay quanh không gian vũ trụ.
-- [ ] **Tính năng Focus & HUD:** Gắn phím số `1-8` để tự động dịch chuyển Camera bám theo hành tinh tương ứng, đồng thời xuất thông tin khoa học của hành tinh đó ra màn hình Console.
+---
 
-### **Chặng 4: Illumination & Texture Mapping **
+## 🔴 CHẶNG 3: ÁNH SÁNG & VẬT LIỆU (THE LIGHT)
+*Mục tiêu: Biến các khối màu bẹt thành khối 3D có chiều sâu.*
 
-- [ ] Kích hoạt hệ thống Ánh sáng Phong (`GL_LIGHTING`, `GL_LIGHT0`), đặt nguồn sáng tại tâm Mặt Trời.
-- [ ] Cấu hình vật liệu khuếch tán (`GL_DIFFUSE`) để tạo hiện tượng ngày/đêm trên bề mặt hành tinh.
-- [ ] Tích hợp thư viện đọc ảnh (vd: `stb_image.h`) để load bản đồ vệ tinh (`.jpg`).
-- [ ] Dùng `Texture Mapping` bọc lớp vỏ địa lý lên các khối cầu, nâng cấp đồ họa từ dạng khối màu trơn lên mức độ chân thực.
+- [ ] **Kích hoạt Lighting:** Bật `GL_LIGHTING` và `GL_LIGHT0`.
+- [ ] **Nguồn sáng điểm (Point Light):** Đặt đèn tại tọa độ $(0,0,0)$ (Tâm Mặt Trời).
+    - Tạo hiệu ứng mặt hướng về Mặt Trời thì sáng, mặt đối diện thì tối (Ngày/Đêm).
+- [ ] **Cấu hình Material:**
+    - Sử dụng `glMaterialfv` thay cho `glColor` (vì Lighting làm vô hiệu hóa Color thông thường).
+    - Quy định độ bóng (`GL_SHININESS`) và màu sắc khuếch tán (`GL_DIFFUSE`).
+
+---
+
+## 🔵 CHẶNG 4: TEXTURE & SKYBOX (THE SKIN)
+*Mục tiêu: Đưa đồ họa lên mức độ chân thực với hình ảnh vệ tinh.*
+
+- [ ] **Texture Mapping:**
+    - Tích hợp thư viện `stb_image.h` để load ảnh `.jpg`/`.png`.
+    - Dùng `gluSphere` (thay cho `glutSolidSphere`) để có thể trải bản đồ bề mặt (Earth, Mars...) lên khối cầu.
+- [ ] **Skybox (Vòm sao):** Vẽ một khối lập phương khổng lồ bao quanh vũ trụ, dán ảnh dải ngân hà vào mặt trong.
+- [ ] **Emission Light:** Làm cho Mặt Trời tự phát sáng rực rỡ (không bị ảnh hưởng bởi bóng tối của chính nó).
+
+---
+
+## 🟣 CHẶNG 5: UI & HOÀN THIỆN (THE POLISH)
+*Mục tiêu: Trình bày thông tin và tối ưu hóa trước khi nộp đồ án.*
+
+- [ ] **Heads-up Display (HUD):**
+    - Hiển thị tên hành tinh đang Focus lên màn hình bằng `glutBitmapCharacter`.
+    - In thông số (Vận tốc, Khoảng cách) ra màn hình Console hoặc giao diện Overlay.
+- [ ] **Refactoring:** Tối ưu hóa vòng lặp, giải phóng bộ nhớ (Vector/Texture).
+- [ ] **Documentation:** Viết hướng dẫn sử dụng phím bấm để thầy giáo dễ chấm điểm.
 
 ## 🚀 Hướng Dẫn Chạy (How to Run)
 

@@ -1,10 +1,24 @@
 #pragma once
+
 #include <string>
+#include <vector>
 #include <GL/glut.h>
+#include <cmath>
+
 using namespace std;
-  
+struct RealSpaceData {
+	string name;
+	double radiusKM;	// Bán kính - KM
+	double distAU;		// khoảng cách đơn vị thiên văn
+	float tilt;
+	float color[3];
+	double dayHours;		// Giờ / Ngày --> Ám chỉ tốc độ tự quay quanh trục
+	double yearDays;		// Chu kỳ quay quanh mặt trời 
+};
+
+
 class Planet {
-public:
+private:
 	string name;				// PLanet name
 	float radius;				// Planet radius
 	float distance;				// Distance from the sun
@@ -15,14 +29,24 @@ public:
 	float currentOrbitAngle;    // Góc quỹ đạo HIỆN TẠI đang ở đâu (0 đến 360 độ)
 	float currentRotationAngle; // Góc tự quay HIỆN TẠI đang ở đâu
 
-	// Hàm khởi tạo constructor
+	vector <Planet> moons;
+
+public:
+	// Hàm khởi tạo constructor - nhận các thông số đã chuẩn hóa
 	Planet(string na, float rad, float dist, float tilt,
 		float rCol, float gCol, float bCol, // Màu sắc RGB cho biến color
 		float orbSpeed, float rotSpeed
 	);
-
+	// Hàm biến đổi giá trị ở struct RAW --> Object chứa các GT chuẩn hóa 
+	static Planet createFromRealData(RealSpaceData data);
+	
 	// Các Phương thức
 	void drawOrrbit();		// Vẽ quỹ đạo
 	void drawPlanet();		// Vẽ hành tinh
 	void updateTime();		// Tính toán góc quay cho khung hình tiếp theo
+
+	// Thêm moons cho hành tinh 
+	void addMoon(Planet m) {
+		moons.push_back(m);
+	};
 };
