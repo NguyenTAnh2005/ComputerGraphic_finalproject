@@ -68,13 +68,13 @@ Dự án này là tiểu luận cuối kỳ nhằm ứng dụng các lý thuyế
 ## 🟡 CHẶNG 2: CAMERA & TƯƠNG TÁC (THE EYES & HANDS)
 *Mục tiêu: Biến một bức tranh tĩnh thành một vũ trụ có thể khám phá tự do.*
 
-- [ ] **Hệ thống Camera 3D:**
+- [x] **Hệ thống Camera 3D:**
     - Sử dụng `gluLookAt` kết hợp tọa độ cầu ($r, \theta, \phi$) để xoay camera quanh tâm hệ.
     - Chế độ **Zoom**: Thay đổi khoảng cách camera bằng con lăn chuột hoặc phím `W/S`.
-- [ ] **Keyboard Interaction:**
+- [x] **Keyboard Interaction:**
     - Điều khiển hướng nhìn bằng phím mũi tên hoặc `A/D`.
     - Phím `Space`: Tạm dừng/Tiếp tục chuyển động (Pause/Resume).
-- [ ] **Planet Focus Mode (Tính năng Pro):**
+- [x] **Planet Focus Mode (Tính năng Pro):**
     - Nhấn phím `1-8` để camera "khóa mục tiêu" vào hành tinh tương ứng. 
     - Khi hành tinh bay, camera tự động bám đuổi theo tọa độ của nó.
 

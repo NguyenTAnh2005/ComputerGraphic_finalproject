@@ -14,6 +14,7 @@ struct RealSpaceData {
 	float color[3];
 	double dayHours;		// Giờ / Ngày --> Ám chỉ tốc độ tự quay quanh trục
 	double yearDays;		// Chu kỳ quay quanh mặt trời 
+	bool hasRing;
 };
 
 
@@ -28,6 +29,7 @@ private:
 	float rotationSpeed; 		// Speed of rotation around its own axis
 	float currentOrbitAngle;    // Góc quỹ đạo HIỆN TẠI đang ở đâu (0 đến 360 độ)
 	float currentRotationAngle; // Góc tự quay HIỆN TẠI đang ở đâu
+	bool hasRing;				// Có vành đai ?
 
 	vector <Planet> moons;
 
@@ -35,7 +37,7 @@ public:
 	// Hàm khởi tạo constructor - nhận các thông số đã chuẩn hóa
 	Planet(string na, float rad, float dist, float tilt,
 		float rCol, float gCol, float bCol, // Màu sắc RGB cho biến color
-		float orbSpeed, float rotSpeed
+		float orbSpeed, float rotSpeed, bool ring
 	);
 	// Hàm biến đổi giá trị ở struct RAW --> Object chứa các GT chuẩn hóa 
 	static Planet createFromRealData(RealSpaceData data);
@@ -44,6 +46,9 @@ public:
 	void drawOrrbit();		// Vẽ quỹ đạo
 	void drawPlanet();		// Vẽ hành tinh
 	void updateTime();		// Tính toán góc quay cho khung hình tiếp theo
+
+	// Get planet position
+	void getPosition(float& x, float& y, float& z);
 
 	// Thêm moons cho hành tinh 
 	void addMoon(Planet m) {

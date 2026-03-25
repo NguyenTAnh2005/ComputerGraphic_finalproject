@@ -1,7 +1,7 @@
 #include "../include/Planet.h"
 #define PI 3.14159265358979323846
 // Constructor
-Planet::Planet(string na, float rad, float dist, float tilt, float rCol, float gCol, float bCol, float orbSpeed, float rotSpeed) {
+Planet::Planet(string na, float rad, float dist, float tilt, float rCol, float gCol, float bCol, float orbSpeed, float rotSpeed, bool ring) {
 	name = na;
 	radius = rad;
 	distance = dist;
@@ -11,6 +11,7 @@ Planet::Planet(string na, float rad, float dist, float tilt, float rCol, float g
 	color[2] = bCol;
 	orbitSpeed = orbSpeed;
 	rotationSpeed = rotSpeed;
+	hasRing = ring;
 	// TRẠNG THÁI MẶC ĐỊNH: Bất kể hành tinh nào vừa đẻ ra, góc quay luôn xuất phát từ 0 độ
 	currentOrbitAngle = 0.0f;
 	currentRotationAngle = 0.0f;
@@ -38,8 +39,8 @@ Planet Planet::createFromRealData(RealSpaceData data) {
 	// --> Clamp 1.5 là sun max, 1.1 cho sao mộc (nhỏ hơn mỗi mặt trời)
 	// Tạo ra sự phân cấp và đảm bảo các hành tinh ko quá nhỏ
 	float resRad = (data.radiusKM / EARTH_RAD_KM) * EARTH_RAD_GL;
-	if (data.name == "Sun") {resRad = 1.75f;}
-	else if (resRad > 1.3f) { resRad = 1.3f; }
+	if (data.name == "Sun") {resRad = 3.0f;}
+	else if (resRad > 3.0f) { resRad = 1.9f; }
 
 	float resOrbSpeed = (data.distAU == 0) ? 0.0f : (EARTH_YEARS_DAY/data.yearDays) * EARTH_ORB_SPEED_GL;
 
@@ -47,8 +48,9 @@ Planet Planet::createFromRealData(RealSpaceData data) {
 
 	return Planet(data.name, resRad, resDist, data.tilt,
 				  data.color[0], data.color[1], data.color[2],
-				  resOrbSpeed,resRotSpeed);
+				  resOrbSpeed,resRotSpeed, data.hasRing);
 }
+
 
 void Planet::drawOrrbit() {
 	//Check: Không phải Mặt Trời thì mới vẽ.
@@ -79,23 +81,52 @@ void Planet::drawPlanet() {
 	glRotatef(currentOrbitAngle, 0.0f, 1.0f, 0.0f);
 	glTranslatef(distance, 0.0f, 0.0f);
 
-	// Vẽ mặt trăng, do chưa glPopMatrix nên hiện tại tâm tọa độ chính là hành tinh 
-	for (int index = 0; index < moons.size(); index++) {
-		// Xuay mặt trăng quanh trục y tại tâm rồi tịnh tiến ra quỹ đạo
-		// biến radius ban đầu là D của hành tinh --> The Sun thì bây giờ là D từ mặt trăng đến hành tinh 
-		// Tuy nhiên bản chất hàm drawplanet đã có sẵn nên ko cần viết thêm logic xuay --> tịnh tiến ở đây nữa 
-		moons[index].drawOrrbit();
-		moons[index].drawPlanet();
-	}
 
 	// Bọc lại bằng glPush tránh bị xung đột lỗi 
 	glPushMatrix();
-		// BẮT ĐÀU VẼ HÀNH TINH 
+
+		// Nghiêng trục cho cả hành tinh và vành đai 
 		glRotatef(tiltAngle, 0.0f, 0.0f, 1.0f);
+
+		// Vẽ mặt trăng, do chưa glPopMatrix nên hiện tại tâm tọa độ chính là hành tinh 
+		for (int index = 0; index < moons.size(); index++) {
+			// Xuay mặt trăng quanh trục y tại tâm rồi tịnh tiến ra quỹ đạo
+			// biến radius ban đầu là D của hành tinh --> The Sun thì bây giờ là D từ mặt trăng đến hành tinh 
+			// Tuy nhiên bản chất hàm drawplanet đã có sẵn nên ko cần viết thêm logic xuay --> tịnh tiến ở đây nữa 
+			moons[index].drawOrrbit();
+			moons[index].drawPlanet();
+		}
+
+		// Vẽ vành đai
+		if (hasRing) {
+			glPushMatrix();
+
+			// TẤT CẢ VÀNH ĐAI ĐỀU PHẢI NẰM LÊN XÍCH ĐẠO (Xoay 90 độ quanh trục X)
+			// Lệnh nghiêng tiltAngle ở trên sẽ lo phần bẻ góc thực tế cho từng hành tinh
+			glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
+
+			GLUquadric* quadric = gluNewQuadric();
+			if (name == "Saturn") {
+				glColor3f(0.8f, 0.7f, 0.6f); // Màu xám vàng
+				gluDisk(quadric, radius * 1.25f, radius * 1.8f, 50, 1);
+			}
+			else if (name == "Uranus") {
+				glColor3f(0.5f, 0.8f, 0.8f); // Màu xanh lơ nhạt, vành đai mỏng hơn
+				gluDisk(quadric, radius * 1.25f, radius * 1.4f, 50, 1);
+			}
+			gluDeleteQuadric(quadric);
+
+			glPopMatrix();
+		}
+
+		// BẮT ĐÀU VẼ HÀNH TINH 
 		glRotatef(currentRotationAngle, 0.0f, 1.0f, 0.0f);
 		glColor3fv(color);
 		glutSolidSphere(radius, 50, 50);
+
+		
 	glPopMatrix();
+	
 
 	// Trả về vị trí gốc tọa độ
 	glPopMatrix();
@@ -119,4 +150,12 @@ void Planet::updateTime() {
 		moons[index].updateTime();
 	}
 }
+
+void Planet::getPosition(float &x, float &y, float &z) {
+	float currentOrbitAngleRad = currentOrbitAngle * PI / 180.0f;
+	x = distance * cos(currentOrbitAngleRad);
+	y = 0;
+	z = -1 * distance * sin(currentOrbitAngleRad);
+}
+
 	
