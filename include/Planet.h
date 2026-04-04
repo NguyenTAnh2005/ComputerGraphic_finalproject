@@ -15,6 +15,7 @@ struct RealSpaceData {
 	double dayHours;		// Giờ / Ngày --> Ám chỉ tốc độ tự quay quanh trục
 	double yearDays;		// Chu kỳ quay quanh mặt trời 
 	bool hasRing;
+	GLuint textureID;
 };
 
 
@@ -33,11 +34,13 @@ private:
 
 	vector <Planet> moons;
 
+	GLuint textureID;			// Biến mới để lưu ID tấm ảnh sau khi load
+
 public:
 	// Hàm khởi tạo constructor - nhận các thông số đã chuẩn hóa
 	Planet(string na, float rad, float dist, float tilt,
 		float rCol, float gCol, float bCol, // Màu sắc RGB cho biến color
-		float orbSpeed, float rotSpeed, bool ring
+		float orbSpeed, float rotSpeed, bool ring, GLuint textureid
 	);
 	// Hàm biến đổi giá trị ở struct RAW --> Object chứa các GT chuẩn hóa 
 	static Planet createFromRealData(RealSpaceData data);

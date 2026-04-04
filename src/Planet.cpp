@@ -1,7 +1,7 @@
 #include "../include/Planet.h"
 #define PI 3.14159265358979323846
 // Constructor
-Planet::Planet(string na, float rad, float dist, float tilt, float rCol, float gCol, float bCol, float orbSpeed, float rotSpeed, bool ring) {
+Planet::Planet(string na, float rad, float dist, float tilt, float rCol, float gCol, float bCol, float orbSpeed, float rotSpeed, bool ring, GLuint textureid) {
 	name = na;
 	radius = rad;
 	distance = dist;
@@ -12,6 +12,7 @@ Planet::Planet(string na, float rad, float dist, float tilt, float rCol, float g
 	orbitSpeed = orbSpeed;
 	rotationSpeed = rotSpeed;
 	hasRing = ring;
+	textureID = textureid;
 	// TRẠNG THÁI MẶC ĐỊNH: Bất kể hành tinh nào vừa đẻ ra, góc quay luôn xuất phát từ 0 độ
 	currentOrbitAngle = 0.0f;
 	currentRotationAngle = 0.0f;
@@ -21,9 +22,13 @@ Planet::Planet(string na, float rad, float dist, float tilt, float rCol, float g
 Planet Planet::createFromRealData(RealSpaceData data) {
 	// 1. Định nghĩa các chuẩn 
 	const float EARTH_RAD_KM = 6371.0f;		// bán kính km của trái đất
-	const float EARTH_DIST_AU = 1.0f;		// D từ trái đất đến mặt trời = 1 đơn vị thiên văn ~ 150M km
-	const float EARTH_DAY_HOURS = 24.0f;	// Chu kỳ tự quay của Trái đất = 24h  -- Rotation Speed
-	const float EARTH_YEARS_DAY = 365.25f;	// Chu kỳ quay quanh mặt trời = 365 ngày 6 hours -- OrbitSpeed 
+	const float EARTH_DIST_AU = 0.5f;		// D từ trái đất đến mặt trời = 1 đơn vị thiên văn ~ 150M km -- set là 1.0f nhưng khá gần nên chỉnh lại
+	// Chu kỳ tự quay của Trái đất = 24h  -- Rotation Speed
+	//const float EARTH_DAY_HOURS = 24.0f;
+	const float EARTH_DAY_HOURS = 2.40f;
+	// Chu kỳ quay quanh mặt trời = 365 ngày 6 hours -- OrbitSpeed
+	//const float EARTH_YEARS_DAY = 365.25f;	 
+	const float EARTH_YEARS_DAY = 36.525f;
 
 	// 2. Các chuẩn 1 được chuẩn hóa tại Open GL 
 	const float EARTH_RAD_GL = 0.4f;		// Trái đất to 0.4
@@ -48,7 +53,7 @@ Planet Planet::createFromRealData(RealSpaceData data) {
 
 	return Planet(data.name, resRad, resDist, data.tilt,
 				  data.color[0], data.color[1], data.color[2],
-				  resOrbSpeed,resRotSpeed, data.hasRing);
+				  resOrbSpeed,resRotSpeed, data.hasRing, data.textureID);
 }
 
 
@@ -59,7 +64,11 @@ void Planet::drawOrrbit() {
 	//Loop : Chạy 360 vòng, mỗi vòng tính 1 tọa độ mới rồi chấm 1 điểm.
 	//Connect : OpenGL tự nối các điểm thành vòng tròn.
 	//Load : Trả lại trạng thái sạch sẽ.
-	if (distance <= 0.0f) return;
+	glDisable(GL_LIGHTING);
+	if (distance <= 0.0f) {
+		glEnable(GL_LIGHTING);
+		return;
+	}
 	glPushMatrix();
 	glColor3f(0.3f, 0.3f, 0.3f);
 	glBegin(GL_LINE_LOOP);
@@ -71,6 +80,7 @@ void Planet::drawOrrbit() {
 	}
 	glEnd();
 	glPopMatrix();
+	glEnable(GL_LIGHTING);
 }
 
 void Planet::drawPlanet() {
@@ -104,25 +114,98 @@ void Planet::drawPlanet() {
 			// TẤT CẢ VÀNH ĐAI ĐỀU PHẢI NẰM LÊN XÍCH ĐẠO (Xoay 90 độ quanh trục X)
 			// Lệnh nghiêng tiltAngle ở trên sẽ lo phần bẻ góc thực tế cho từng hành tinh
 			glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
-
 			GLUquadric* quadric = gluNewQuadric();
 			if (name == "Saturn") {
-				glColor3f(0.8f, 0.7f, 0.6f); // Màu xám vàng
+				GLfloat ring_emission[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+				GLfloat ring_diffuse[] = { color[0], color[1], color[2], 1.0f };
+				GLfloat ring_specular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+				GLfloat ring_shininess = 50.0f;
+				//glColor3f(0.8f, 0.7f, 0.6f); // Màu xám vàng
+				glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, ring_emission);
+				glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, ring_diffuse);
+				glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, ring_specular);
+				glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, ring_shininess);
+
+				GLfloat ring_ambient[] = { color[0] , color[1] , color[2] , 1.0f };
+				glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ring_ambient);
+
 				gluDisk(quadric, radius * 1.25f, radius * 1.8f, 50, 1);
 			}
 			else if (name == "Uranus") {
 				glColor3f(0.5f, 0.8f, 0.8f); // Màu xanh lơ nhạt, vành đai mỏng hơn
+				GLfloat ring_emission[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+				GLfloat ring_diffuse[] = { color[0], color[1], color[2], 1.0f };
+				GLfloat ring_specular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+				GLfloat ring_shininess = 50.0f;
+				glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, ring_emission);
+				glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, ring_diffuse);
+				glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, ring_specular);
+				glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, ring_shininess);
+
+				GLfloat ring_ambient[] = { color[0] , color[1] , color[2] , 1.0f };
+				glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ring_ambient);
+
 				gluDisk(quadric, radius * 1.25f, radius * 1.4f, 50, 1);
 			}
 			gluDeleteQuadric(quadric);
 
 			glPopMatrix();
 		}
+		if (name == "sun" || name == "Sun") {
+			// Mặt Trời tự phát ra ánh sáng màu vàng rực
+			GLfloat sun_emission[] = { color[0], color[1], color[2], 1.0f};
+			glMaterialfv(GL_FRONT, GL_EMISSION, sun_emission);
+
+			// Tắt Diffuse và Specular cho mặt trời ==> Sáng tỏa xung quanh 
+			GLfloat black_color[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+			glMaterialfv(GL_FRONT, GL_DIFFUSE, black_color);
+			glMaterialfv(GL_FRONT, GL_SPECULAR, black_color);
+
+		}
+		else {
+			// Tắt tự phát sáng
+			GLfloat no_emission[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+			glMaterialfv(GL_FRONT, GL_EMISSION, no_emission);
+
+			// Cấp màu sắc gốc - Diffuse
+			GLfloat planet_diffuse[] = { color[0], color[1], color[2], 1.0f };
+			glMaterialfv(GL_FRONT, GL_DIFFUSE, planet_diffuse);
+
+			// Cấp độ bóng (Specular & Shininess
+			GLfloat planet_specular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+			GLfloat planet_shininess = 50.0f;
+			glMaterialfv(GL_FRONT, GL_SPECULAR, planet_specular);
+			glMaterialf(GL_FRONT, GL_SHININESS, planet_shininess);
+		}
 
 		// BẮT ĐÀU VẼ HÀNH TINH 
 		glRotatef(currentRotationAngle, 0.0f, 1.0f, 0.0f);
-		glColor3fv(color);
-		glutSolidSphere(radius, 50, 50);
+		//glColor3fv(color);
+		//glutSolidSphere(radius, 50, 50);
+		glEnable(GL_TEXTURE_2D);								// Cho phép dán ảnh
+		glBindTexture(GL_TEXTURE_2D, textureID);				// Chọn ảnh của hành tinh này
+
+		GLUquadric* quadric = gluNewQuadric();
+		gluQuadricTexture(quadric, GL_TRUE);					// Tự động tính tọa độ dán ảnh (UV Mapping)
+		gluQuadricNormals(quadric, GLU_SMOOTH);					// Giúp ánh sáng mịn màng hơn
+
+		glRotatef(currentRotationAngle, 0.0f, 1.0f, 0.0f);		// Tự quay quanh trục Y
+
+		// Vẽ khối cầu bằng GLU thay vì GLUT
+		glPushMatrix();
+		glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
+
+		if (name == "Sun") {
+			// Tăng độ mịn cho Mặt Trời
+			gluSphere(quadric, radius, 100, 100);
+		}
+		else {
+			gluSphere(quadric, radius, 50, 50);
+		}
+		glPopMatrix();
+
+		gluDeleteQuadric(quadric);						// Vẽ xong thì dọn dẹp bộ nhớ
+		glDisable(GL_TEXTURE_2D);						// Tắt công tắc để không ảnh hưởng vật thể khác
 
 		
 	glPopMatrix();

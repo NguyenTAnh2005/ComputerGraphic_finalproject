@@ -61,7 +61,7 @@ Dự án này là tiểu luận cuối kỳ nhằm ứng dụng các lý thuyế
 - [x] **Frame Control:** Khóa 60 FPS bằng `glutTimerFunc` (mỗi 16ms cập nhật một lần).
 - [x] **Hierarchical Modeling (Nhiệm vụ trọng tâm):** - Áp dụng lồng `glPushMatrix` và `glPopMatrix` để vẽ **Mặt Trăng quay quanh Trái Đất**.
     - *Logic:* Tọa độ Mặt Trăng phải phụ thuộc vào tọa độ hiện tại của Trái Đất.
-- [ ] **Saturn's Ring:** Sử dụng `gluDisk` để vẽ vành đai bao quanh Sao Thổ.
+- [x] **Saturn's Ring:** Sử dụng `gluDisk` để vẽ vành đai bao quanh Sao Thổ.
 
 ---
 
@@ -75,7 +75,7 @@ Dự án này là tiểu luận cuối kỳ nhằm ứng dụng các lý thuyế
     - Điều khiển hướng nhìn bằng phím mũi tên hoặc `A/D`.
     - Phím `Space`: Tạm dừng/Tiếp tục chuyển động (Pause/Resume).
 - [x] **Planet Focus Mode (Tính năng Pro):**
-    - Nhấn phím `1-8` để camera "khóa mục tiêu" vào hành tinh tương ứng. 
+    - Nhấn phím `1-9` để camera "khóa mục tiêu" vào hành tinh tương ứng. 
     - Khi hành tinh bay, camera tự động bám đuổi theo tọa độ của nó.
 
 ---
@@ -83,10 +83,10 @@ Dự án này là tiểu luận cuối kỳ nhằm ứng dụng các lý thuyế
 ## 🔴 CHẶNG 3: ÁNH SÁNG & VẬT LIỆU (THE LIGHT)
 *Mục tiêu: Biến các khối màu bẹt thành khối 3D có chiều sâu.*
 
-- [ ] **Kích hoạt Lighting:** Bật `GL_LIGHTING` và `GL_LIGHT0`.
-- [ ] **Nguồn sáng điểm (Point Light):** Đặt đèn tại tọa độ $(0,0,0)$ (Tâm Mặt Trời).
+- [x] **Kích hoạt Lighting:** Bật `GL_LIGHTING` và `GL_LIGHT0`.
+- [x] **Nguồn sáng điểm (Point Light):** Đặt đèn tại tọa độ $(0,0,0)$ (Tâm Mặt Trời).
     - Tạo hiệu ứng mặt hướng về Mặt Trời thì sáng, mặt đối diện thì tối (Ngày/Đêm).
-- [ ] **Cấu hình Material:**
+- [x] **Cấu hình Material:**
     - Sử dụng `glMaterialfv` thay cho `glColor` (vì Lighting làm vô hiệu hóa Color thông thường).
     - Quy định độ bóng (`GL_SHININESS`) và màu sắc khuếch tán (`GL_DIFFUSE`).
 
@@ -95,9 +95,10 @@ Dự án này là tiểu luận cuối kỳ nhằm ứng dụng các lý thuyế
 ## 🔵 CHẶNG 4: TEXTURE & SKYBOX (THE SKIN)
 *Mục tiêu: Đưa đồ họa lên mức độ chân thực với hình ảnh vệ tinh.*
 
-- [ ] **Texture Mapping:**
+- [x] **Texture Mapping:**
     - Tích hợp thư viện `stb_image.h` để load ảnh `.jpg`/`.png`.
     - Dùng `gluSphere` (thay cho `glutSolidSphere`) để có thể trải bản đồ bề mặt (Earth, Mars...) lên khối cầu.
+    ( Chưa thể dán phần ảnh vành đai lên vành đai sao thổ)
 - [ ] **Skybox (Vòm sao):** Vẽ một khối lập phương khổng lồ bao quanh vũ trụ, dán ảnh dải ngân hà vào mặt trong.
 - [ ] **Emission Light:** Làm cho Mặt Trời tự phát sáng rực rỡ (không bị ảnh hưởng bởi bóng tối của chính nó).
 
