@@ -50,6 +50,9 @@ public:
 	void drawPlanet();		// Vẽ hành tinh
 	void updateTime();		// Tính toán góc quay cho khung hình tiếp theo
 
+	vector<Planet>& getMoons();
+	float getTiltAngle();
+	float getDistance();
 	// Get planet position
 	void getPosition(float& x, float& y, float& z);
 
@@ -57,4 +60,5 @@ public:
 	void addMoon(Planet m) {
 		moons.push_back(m);
 	};
+	void printInfo(bool isMoon = false);
 };

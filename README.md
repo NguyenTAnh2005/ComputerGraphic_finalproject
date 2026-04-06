@@ -85,7 +85,8 @@ Dự án này là tiểu luận cuối kỳ nhằm ứng dụng các lý thuyế
 
 - [x] **Kích hoạt Lighting:** Bật `GL_LIGHTING` và `GL_LIGHT0`.
 - [x] **Nguồn sáng điểm (Point Light):** Đặt đèn tại tọa độ $(0,0,0)$ (Tâm Mặt Trời).
-    - Tạo hiệu ứng mặt hướng về Mặt Trời thì sáng, mặt đối diện thì tối (Ngày/Đêm).
+      - Tạo hiệu ứng mặt hướng về Mặt Trời thì sáng, mặt đối diện thì tối (Ngày/Đêm).
+      -Emission Light:** Làm cho Mặt Trời tự phát sáng rực rỡ (không bị ảnh hưởng bởi bóng tối của chính nó).
 - [x] **Cấu hình Material:**
     - Sử dụng `glMaterialfv` thay cho `glColor` (vì Lighting làm vô hiệu hóa Color thông thường).
     - Quy định độ bóng (`GL_SHININESS`) và màu sắc khuếch tán (`GL_DIFFUSE`).
@@ -99,19 +100,18 @@ Dự án này là tiểu luận cuối kỳ nhằm ứng dụng các lý thuyế
     - Tích hợp thư viện `stb_image.h` để load ảnh `.jpg`/`.png`.
     - Dùng `gluSphere` (thay cho `glutSolidSphere`) để có thể trải bản đồ bề mặt (Earth, Mars...) lên khối cầu.
     ( Chưa thể dán phần ảnh vành đai lên vành đai sao thổ)
-- [ ] **Skybox (Vòm sao):** Vẽ một khối lập phương khổng lồ bao quanh vũ trụ, dán ảnh dải ngân hà vào mặt trong.
-- [ ] **Emission Light:** Làm cho Mặt Trời tự phát sáng rực rỡ (không bị ảnh hưởng bởi bóng tối của chính nó).
+- [x] Bổ sung tương tác với chuột - Thu phóng, xuay góc camera quan sát.
+- [x] **Skybox (Vòm sao):** Vẽ một khối lập phương khổng lồ bao quanh vũ trụ, dán ảnh dải ngân hà vào mặt trong.
 
 ---
 
 ## 🟣 CHẶNG 5: UI & HOÀN THIỆN (THE POLISH)
 *Mục tiêu: Trình bày thông tin và tối ưu hóa trước khi nộp đồ án.*
 
-- [ ] **Heads-up Display (HUD):**
-    - Hiển thị tên hành tinh đang Focus lên màn hình bằng `glutBitmapCharacter`.
-    - In thông số (Vận tốc, Khoảng cách) ra màn hình Console hoặc giao diện Overlay.
+- [x] **Console Info:**
+    - Hiển thị thông tin hướng dẫn sử dụng.
+    - Hiển thị thông tin hành tinh đang focus trên màn hình console.
 - [ ] **Refactoring:** Tối ưu hóa vòng lặp, giải phóng bộ nhớ (Vector/Texture).
-- [ ] **Documentation:** Viết hướng dẫn sử dụng phím bấm để thầy giáo dễ chấm điểm.
 
 ## 🚀 Hướng Dẫn Chạy (How to Run)
 

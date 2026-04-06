@@ -1,5 +1,25 @@
 #include "../include/Planet.h"
 #define PI 3.14159265358979323846
+#include <iostream>
+using namespace std;
+
+// Định nghĩa các chuẩn 
+const float EARTH_RAD_KM = 6371.0f;		// bán kính km của trái đất
+const float EARTH_DIST_AU = 0.5f;		// D từ trái đất đến mặt trời = 1 đơn vị thiên văn ~ 150M km -- set là 1.0f nhưng khá gần nên chỉnh lại
+// Chu kỳ tự quay của Trái đất = 24h  -- Rotation Speed
+//const float EARTH_DAY_HOURS = 24.0f;
+const float EARTH_DAY_HOURS = 24.0f;
+// Chu kỳ quay quanh mặt trời = 365 ngày 6 hours -- OrbitSpeed
+//const float EARTH_YEARS_DAY = 365.25f;	 
+const float EARTH_YEAR_DAYS = 36.525f;
+
+// Các chuẩn 1 được chuẩn hóa tại Open GL 
+const float EARTH_RAD_GL = 0.4f;		// Trái đất to 0.4
+const float EARTH_DIST_GL = 6.0f;		// Trái đất cách mặt trời 0.6
+const float EARTH_ROT_SPEED_GL = 1.0f;	// Trái đất tự quay với tốc độ = 1
+const float EARTH_ORB_SPEED_GL = 0.7f;	// Trái đất bay với tốc độ 0.7 đơn vị góc / frame
+
+
 // Constructor
 Planet::Planet(string na, float rad, float dist, float tilt, float rCol, float gCol, float bCol, float orbSpeed, float rotSpeed, bool ring, GLuint textureid) {
 	name = na;
@@ -20,26 +40,8 @@ Planet::Planet(string na, float rad, float dist, float tilt, float rCol, float g
 
 // Hàm biến đổi từ giá trị thực ở Struct sang OBJect với GT chuẩn hóa 
 Planet Planet::createFromRealData(RealSpaceData data) {
-	// 1. Định nghĩa các chuẩn 
-	const float EARTH_RAD_KM = 6371.0f;		// bán kính km của trái đất
-	const float EARTH_DIST_AU = 0.5f;		// D từ trái đất đến mặt trời = 1 đơn vị thiên văn ~ 150M km -- set là 1.0f nhưng khá gần nên chỉnh lại
-	// Chu kỳ tự quay của Trái đất = 24h  -- Rotation Speed
-	//const float EARTH_DAY_HOURS = 24.0f;
-	const float EARTH_DAY_HOURS = 2.40f;
-	// Chu kỳ quay quanh mặt trời = 365 ngày 6 hours -- OrbitSpeed
-	//const float EARTH_YEARS_DAY = 365.25f;	 
-	const float EARTH_YEARS_DAY = 36.525f;
-
-	// 2. Các chuẩn 1 được chuẩn hóa tại Open GL 
-	const float EARTH_RAD_GL = 0.4f;		// Trái đất to 0.4
-	const float EARTH_DIST_GL = 6.0f;		// Trái đất cách mặt trời 0.6
-	const float EARTH_ROT_SPEED_GL = 1.0f;	// Trái đất tự quay với tốc độ = 1
-	const float EARTH_ORB_SPEED_GL = 0.7f;	// Trái đất bay với tốc độ 0.7 đơn vị góc / frame
-
-	// 3. Tính toán chuẩn hóa 
-	
+	//Tính toán chuẩn hóa 
 	float resDist = (data.distAU == 0) ? 0.0f : sqrt(data.distAU / EARTH_DIST_AU) * EARTH_DIST_GL;
-
 	// Nếu dùng CT của Wiki thì tỉ lệ lệch khá nhiều, không đủ vẽ
 	// --> Clamp 1.5 là sun max, 1.1 cho sao mộc (nhỏ hơn mỗi mặt trời)
 	// Tạo ra sự phân cấp và đảm bảo các hành tinh ko quá nhỏ
@@ -47,7 +49,7 @@ Planet Planet::createFromRealData(RealSpaceData data) {
 	if (data.name == "Sun") {resRad = 3.0f;}
 	else if (resRad > 3.0f) { resRad = 1.9f; }
 
-	float resOrbSpeed = (data.distAU == 0) ? 0.0f : (EARTH_YEARS_DAY/data.yearDays) * EARTH_ORB_SPEED_GL;
+	float resOrbSpeed = (data.distAU == 0) ? 0.0f : (EARTH_YEAR_DAYS/data.yearDays) * EARTH_ORB_SPEED_GL;
 
 	float resRotSpeed = (EARTH_DAY_HOURS / data.dayHours) * EARTH_ROT_SPEED_GL;
 
@@ -82,6 +84,7 @@ void Planet::drawOrrbit() {
 	glPopMatrix();
 	glEnable(GL_LIGHTING);
 }
+
 
 void Planet::drawPlanet() {
 	// Lưu vị trí mặt trời 
@@ -151,6 +154,7 @@ void Planet::drawPlanet() {
 
 			glPopMatrix();
 		}
+		// Cấu hình lightning cho mặt trời và các hành tinh khác
 		if (name == "sun" || name == "Sun") {
 			// Mặt Trời tự phát ra ánh sáng màu vàng rực
 			GLfloat sun_emission[] = { color[0], color[1], color[2], 1.0f};
@@ -180,16 +184,12 @@ void Planet::drawPlanet() {
 
 		// BẮT ĐÀU VẼ HÀNH TINH 
 		glRotatef(currentRotationAngle, 0.0f, 1.0f, 0.0f);
-		//glColor3fv(color);
-		//glutSolidSphere(radius, 50, 50);
 		glEnable(GL_TEXTURE_2D);								// Cho phép dán ảnh
 		glBindTexture(GL_TEXTURE_2D, textureID);				// Chọn ảnh của hành tinh này
 
 		GLUquadric* quadric = gluNewQuadric();
 		gluQuadricTexture(quadric, GL_TRUE);					// Tự động tính tọa độ dán ảnh (UV Mapping)
 		gluQuadricNormals(quadric, GLU_SMOOTH);					// Giúp ánh sáng mịn màng hơn
-
-		glRotatef(currentRotationAngle, 0.0f, 1.0f, 0.0f);		// Tự quay quanh trục Y
 
 		// Vẽ khối cầu bằng GLU thay vì GLUT
 		glPushMatrix();
@@ -239,6 +239,40 @@ void Planet::getPosition(float &x, float &y, float &z) {
 	x = distance * cos(currentOrbitAngleRad);
 	y = 0;
 	z = -1 * distance * sin(currentOrbitAngleRad);
+}
+
+vector<Planet>& Planet::getMoons() {
+	return moons;
+}
+float Planet::getTiltAngle() {
+	return (tiltAngle*PI)/180.0f;
+}
+float Planet::getDistance() {
+	return distance;
+}
+void Planet::printInfo(bool isMoon) {
+	float real_radius = (radius * EARTH_RAD_KM)/EARTH_RAD_GL;
+	float real_distance = (pow(distance, 2)/ pow(EARTH_DIST_GL, 2)) * EARTH_DIST_AU;
+	float real_yearDays = 0.0f;
+	if (orbitSpeed > 0) {
+		real_yearDays = (EARTH_YEAR_DAYS * EARTH_ORB_SPEED_GL) / orbitSpeed;
+	}
+	float real_dayHours = (EARTH_DAY_HOURS * EARTH_ROT_SPEED_GL) / rotationSpeed;
+
+	string type = isMoon ? "VE TINH ( MAT TRANG) " : "HANH TINH";
+	cout << "------------------------------------------" << endl;
+	cout << "MUC TIEU DANG QUAN SAT " << name << " \n";
+	cout << " Phan loai: " << type << " \n";
+	cout << " Ban kinh : " << real_radius << " km \n";
+	cout << " Khoang cach den vat chu: " << real_distance << " Au - ( don vi thien van) \n";
+	cout << " Chu ky tu quay: " << real_dayHours << " (gio) \n";
+	if (name == "Sun" || name == "sun") {
+		cout << "Chu ky quy dao: N/A (Tam he mat troi)" << endl;
+	}
+	else {
+		cout << "Chu ky quy dao: " << real_yearDays << " ngay" << endl;
+	}
+	cout << "------------------------------------------" << endl;
 }
 
 	
