@@ -61,4 +61,8 @@ public:
 		moons.push_back(m);
 	};
 	void printInfo(bool isMoon = false);
+
+	void drawMoons();		// Vẽ mặt trăng
+	void drawRing();		// Vẽ vành đai
+	void setupMaterial();	// Cấu hình độ sáng, độ bóng, độ nhám, màu gốc 
 };

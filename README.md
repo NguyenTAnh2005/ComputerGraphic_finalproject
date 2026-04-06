@@ -111,7 +111,7 @@ Dự án này là tiểu luận cuối kỳ nhằm ứng dụng các lý thuyế
 - [x] **Console Info:**
     - Hiển thị thông tin hướng dẫn sử dụng.
     - Hiển thị thông tin hành tinh đang focus trên màn hình console.
-- [ ] **Refactoring:** Tối ưu hóa vòng lặp, giải phóng bộ nhớ (Vector/Texture).
+- [x] **Refactoring:** Tối ưu hóa vòng lặp, giải phóng bộ nhớ (Vector/Texture).
 
 ## 🚀 Hướng Dẫn Chạy (How to Run)
 

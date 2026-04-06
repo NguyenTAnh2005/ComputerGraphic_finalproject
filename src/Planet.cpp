@@ -58,7 +58,6 @@ Planet Planet::createFromRealData(RealSpaceData data) {
 				  resOrbSpeed,resRotSpeed, data.hasRing, data.textureID);
 }
 
-
 void Planet::drawOrrbit() {
 	//Check: Không phải Mặt Trời thì mới vẽ.
 	//Save : Lưu trạng thái cũ.
@@ -85,132 +84,117 @@ void Planet::drawOrrbit() {
 	glEnable(GL_LIGHTING);
 }
 
+void Planet::drawMoons() {
+	for (int index = 0; index < moons.size(); index++) {
+		moons[index].drawOrrbit();
+		moons[index].drawPlanet();
+	}
+}
+
+void Planet::drawRing() {
+	glPushMatrix();
+
+	// TẤT CẢ VÀNH ĐAI ĐỀU PHẢI NẰM LÊN XÍCH ĐẠO (Xoay 90 độ quanh trục X)
+	// Lệnh nghiêng tiltAngle ở trên sẽ lo phần bẻ góc thực tế cho từng hành tinh
+	glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
+	GLUquadric* quadric = gluNewQuadric();
+	if (name == "Saturn") {
+		GLfloat ring_emission[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+		GLfloat ring_diffuse[] = { color[0], color[1], color[2], 1.0f };
+		GLfloat ring_specular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+		GLfloat ring_shininess = 50.0f;
+		//glColor3f(0.8f, 0.7f, 0.6f); // Màu xám vàng
+		glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, ring_emission);
+		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, ring_diffuse);
+		glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, ring_specular);
+		glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, ring_shininess);
+
+		GLfloat ring_ambient[] = { color[0] , color[1] , color[2] , 1.0f };
+		glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ring_ambient);
+
+		gluDisk(quadric, radius * 1.25f, radius * 1.8f, 50, 1);
+	}
+	else if (name == "Uranus") {
+		glColor3f(0.5f, 0.8f, 0.8f); // Màu xanh lơ nhạt, vành đai mỏng hơn
+		GLfloat ring_emission[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+		GLfloat ring_diffuse[] = { color[0], color[1], color[2], 1.0f };
+		GLfloat ring_specular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+		GLfloat ring_shininess = 50.0f;
+		glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, ring_emission);
+		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, ring_diffuse);
+		glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, ring_specular);
+		glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, ring_shininess);
+
+		GLfloat ring_ambient[] = { color[0] , color[1] , color[2] , 1.0f };
+		glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ring_ambient);
+
+		gluDisk(quadric, radius * 1.25f, radius * 1.4f, 50, 1);
+	}
+	gluDeleteQuadric(quadric);
+
+	glPopMatrix();
+}
+
+void Planet::setupMaterial() {
+	if (name == "sun" || name == "Sun") {
+		// Mặt Trời tự phát ra ánh sáng màu vàng rực
+		GLfloat sun_emission[] = { color[0], color[1], color[2], 1.0f };
+		glMaterialfv(GL_FRONT, GL_EMISSION, sun_emission);
+
+		// Tắt Diffuse và Specular cho mặt trời ==> Sáng tỏa xung quanh 
+		GLfloat black_color[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+		glMaterialfv(GL_FRONT, GL_DIFFUSE, black_color);
+		glMaterialfv(GL_FRONT, GL_SPECULAR, black_color);
+
+	}
+	else {
+		// Tắt tự phát sáng
+		GLfloat no_emission[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+		glMaterialfv(GL_FRONT, GL_EMISSION, no_emission);
+
+		// Cấp màu sắc gốc - Diffuse
+		GLfloat planet_diffuse[] = { color[0], color[1], color[2], 1.0f };
+		glMaterialfv(GL_FRONT, GL_DIFFUSE, planet_diffuse);
+
+		// Cấp độ bóng (Specular & Shininess
+		GLfloat planet_specular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+		GLfloat planet_shininess = 50.0f;
+		glMaterialfv(GL_FRONT, GL_SPECULAR, planet_specular);
+		glMaterialf(GL_FRONT, GL_SHININESS, planet_shininess);
+	}
+}
 
 void Planet::drawPlanet() {
 	// Lưu vị trí mặt trời 
 	glPushMatrix();
-
-	// Xuay hành tinh quanh trục Y rồi đưa ra quỹ đạo
-	glRotatef(currentOrbitAngle, 0.0f, 1.0f, 0.0f);
-	glTranslatef(distance, 0.0f, 0.0f);
-
-
-	// Bọc lại bằng glPush tránh bị xung đột lỗi 
-	glPushMatrix();
-
-		// Nghiêng trục cho cả hành tinh và vành đai 
-		glRotatef(tiltAngle, 0.0f, 0.0f, 1.0f);
-
-		// Vẽ mặt trăng, do chưa glPopMatrix nên hiện tại tâm tọa độ chính là hành tinh 
-		for (int index = 0; index < moons.size(); index++) {
-			// Xuay mặt trăng quanh trục y tại tâm rồi tịnh tiến ra quỹ đạo
-			// biến radius ban đầu là D của hành tinh --> The Sun thì bây giờ là D từ mặt trăng đến hành tinh 
-			// Tuy nhiên bản chất hàm drawplanet đã có sẵn nên ko cần viết thêm logic xuay --> tịnh tiến ở đây nữa 
-			moons[index].drawOrrbit();
-			moons[index].drawPlanet();
-		}
-
-		// Vẽ vành đai
-		if (hasRing) {
-			glPushMatrix();
-
-			// TẤT CẢ VÀNH ĐAI ĐỀU PHẢI NẰM LÊN XÍCH ĐẠO (Xoay 90 độ quanh trục X)
-			// Lệnh nghiêng tiltAngle ở trên sẽ lo phần bẻ góc thực tế cho từng hành tinh
-			glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
-			GLUquadric* quadric = gluNewQuadric();
-			if (name == "Saturn") {
-				GLfloat ring_emission[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-				GLfloat ring_diffuse[] = { color[0], color[1], color[2], 1.0f };
-				GLfloat ring_specular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-				GLfloat ring_shininess = 50.0f;
-				//glColor3f(0.8f, 0.7f, 0.6f); // Màu xám vàng
-				glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, ring_emission);
-				glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, ring_diffuse);
-				glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, ring_specular);
-				glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, ring_shininess);
-
-				GLfloat ring_ambient[] = { color[0] , color[1] , color[2] , 1.0f };
-				glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ring_ambient);
-
-				gluDisk(quadric, radius * 1.25f, radius * 1.8f, 50, 1);
-			}
-			else if (name == "Uranus") {
-				glColor3f(0.5f, 0.8f, 0.8f); // Màu xanh lơ nhạt, vành đai mỏng hơn
-				GLfloat ring_emission[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-				GLfloat ring_diffuse[] = { color[0], color[1], color[2], 1.0f };
-				GLfloat ring_specular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-				GLfloat ring_shininess = 50.0f;
-				glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, ring_emission);
-				glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, ring_diffuse);
-				glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, ring_specular);
-				glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, ring_shininess);
-
-				GLfloat ring_ambient[] = { color[0] , color[1] , color[2] , 1.0f };
-				glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ring_ambient);
-
-				gluDisk(quadric, radius * 1.25f, radius * 1.4f, 50, 1);
-			}
-			gluDeleteQuadric(quadric);
-
-			glPopMatrix();
-		}
-		// Cấu hình lightning cho mặt trời và các hành tinh khác
-		if (name == "sun" || name == "Sun") {
-			// Mặt Trời tự phát ra ánh sáng màu vàng rực
-			GLfloat sun_emission[] = { color[0], color[1], color[2], 1.0f};
-			glMaterialfv(GL_FRONT, GL_EMISSION, sun_emission);
-
-			// Tắt Diffuse và Specular cho mặt trời ==> Sáng tỏa xung quanh 
-			GLfloat black_color[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-			glMaterialfv(GL_FRONT, GL_DIFFUSE, black_color);
-			glMaterialfv(GL_FRONT, GL_SPECULAR, black_color);
-
-		}
-		else {
-			// Tắt tự phát sáng
-			GLfloat no_emission[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-			glMaterialfv(GL_FRONT, GL_EMISSION, no_emission);
-
-			// Cấp màu sắc gốc - Diffuse
-			GLfloat planet_diffuse[] = { color[0], color[1], color[2], 1.0f };
-			glMaterialfv(GL_FRONT, GL_DIFFUSE, planet_diffuse);
-
-			// Cấp độ bóng (Specular & Shininess
-			GLfloat planet_specular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-			GLfloat planet_shininess = 50.0f;
-			glMaterialfv(GL_FRONT, GL_SPECULAR, planet_specular);
-			glMaterialf(GL_FRONT, GL_SHININESS, planet_shininess);
-		}
-
-		// BẮT ĐÀU VẼ HÀNH TINH 
-		glRotatef(currentRotationAngle, 0.0f, 1.0f, 0.0f);
-		glEnable(GL_TEXTURE_2D);								// Cho phép dán ảnh
-		glBindTexture(GL_TEXTURE_2D, textureID);				// Chọn ảnh của hành tinh này
-
-		GLUquadric* quadric = gluNewQuadric();
-		gluQuadricTexture(quadric, GL_TRUE);					// Tự động tính tọa độ dán ảnh (UV Mapping)
-		gluQuadricNormals(quadric, GLU_SMOOTH);					// Giúp ánh sáng mịn màng hơn
-
-		// Vẽ khối cầu bằng GLU thay vì GLUT
+		// Xuay hành tinh quanh trục Y rồi đưa ra quỹ đạo
+		glRotatef(currentOrbitAngle, 0.0f, 1.0f, 0.0f);
+		glTranslatef(distance, 0.0f, 0.0f);
+		// Bọc lại bằng glPush tránh bị xung đột lỗi 
 		glPushMatrix();
-		glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
 
-		if (name == "Sun") {
-			// Tăng độ mịn cho Mặt Trời
-			gluSphere(quadric, radius, 100, 100);
-		}
-		else {
-			gluSphere(quadric, radius, 50, 50);
-		}
+			// Nghiêng trục cho cả hành tinh và vành đai 
+			glRotatef(tiltAngle, 0.0f, 0.0f, 1.0f);
+			// Vẽ vành đai
+			if (hasRing) { drawRing(); }
+			// Cấu hình lightning cho mặt trời và các hành tinh khác
+			setupMaterial();
+			// BẮT ĐÀU VẼ HÀNH TINH 
+			glRotatef(currentRotationAngle, 0.0f, 1.0f, 0.0f);
+			glEnable(GL_TEXTURE_2D);								// Cho phép dán ảnh
+			glBindTexture(GL_TEXTURE_2D, textureID);				// Chọn ảnh của hành tinh này
+			GLUquadric* quadric = gluNewQuadric();
+			gluQuadricTexture(quadric, GL_TRUE);					// Tự động tính tọa độ dán ảnh (UV Mapping)
+			gluQuadricNormals(quadric, GLU_SMOOTH);					// Giúp ánh sáng mịn màng hơn
+			// Vẽ khối cầu bằng GLU thay vì GLUT
+			glPushMatrix();
+			glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
+			if (name == "Sun") { gluSphere(quadric, radius, 100, 100); }
+			else { gluSphere(quadric, radius, 50, 50); }
+			glPopMatrix();
+			gluDeleteQuadric(quadric);						// Vẽ xong thì dọn dẹp bộ nhớ
+			glDisable(GL_TEXTURE_2D);						// Tắt công tắc để không ảnh hưởng vật thể khác
 		glPopMatrix();
-
-		gluDeleteQuadric(quadric);						// Vẽ xong thì dọn dẹp bộ nhớ
-		glDisable(GL_TEXTURE_2D);						// Tắt công tắc để không ảnh hưởng vật thể khác
-
-		
-	glPopMatrix();
-	
-
 	// Trả về vị trí gốc tọa độ
 	glPopMatrix();
 }
@@ -218,15 +202,11 @@ void Planet::drawPlanet() {
 void Planet::updateTime() {
 	// Cập nhật góc của hành tinh
 	currentOrbitAngle += orbitSpeed;
-	if (currentOrbitAngle >= 360.0f) {
-		currentOrbitAngle -= 360.0f;
-	}
+	if (currentOrbitAngle >= 360.0f) currentOrbitAngle -= 360.0f;
 
 	// Cập nhật góc tự xuay của hành tinh
 	currentRotationAngle += rotationSpeed;
-	if (currentRotationAngle >= 360.0f) {
-		currentRotationAngle -= 360.0f;
-	}
+	if (currentRotationAngle >= 360.0f) currentRotationAngle -= 360.0f;
 
 	// Đệ quy cho các moons cũng được cập nhật vòng quay theo TG 
 	for (int index = 0; index < moons.size(); index++) {
