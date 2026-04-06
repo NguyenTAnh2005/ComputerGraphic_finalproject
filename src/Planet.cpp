@@ -8,7 +8,7 @@ const float EARTH_RAD_KM = 6371.0f;		// bán kính km của trái đất
 const float EARTH_DIST_AU = 0.5f;		// D từ trái đất đến mặt trời = 1 đơn vị thiên văn ~ 150M km -- set là 1.0f nhưng khá gần nên chỉnh lại
 // Chu kỳ tự quay của Trái đất = 24h  -- Rotation Speed
 //const float EARTH_DAY_HOURS = 24.0f;
-const float EARTH_DAY_HOURS = 24.0f;
+const float EARTH_DAY_HOURS = 2.40f;
 // Chu kỳ quay quanh mặt trời = 365 ngày 6 hours -- OrbitSpeed
 //const float EARTH_YEARS_DAY = 365.25f;	 
 const float EARTH_YEAR_DAYS = 36.525f;
