@@ -23,7 +23,7 @@ Dự án này là tiểu luận cuối kỳ nhằm ứng dụng các lý thuyế
 1. **Render 3D:** Khởi tạo và vẽ hệ thống Mặt Trời cùng 8 hành tinh trong không gian 3 chiều.
 2. **Animation (60 FPS):** Các hành tinh tự động quay quanh trục và quay quanh Mặt Trời theo tỷ lệ thời gian được lập trình bằng `glutTimerFunc`.
 3. **Tương tác Camera:** - Điều khiển góc nhìn bằng chuột và bàn phím.
-   - Các phím số (1-8) để di chuyển Camera focus vào từng hành tinh cụ thể.
+   - Các phím số (1-9) để di chuyển Camera focus vào từng hành tinh cụ thể.
 4. **Console UI:** Hiển thị thông số của hành tinh (Khối lượng, Khoảng cách) - Chức năng nâng cao.
 
 ## Cấu trúc thư mục
@@ -31,16 +31,23 @@ Dự án này là tiểu luận cuối kỳ nhằm ứng dụng các lý thuyế
 ```bash
 ├── 📁 Final
 ├── 📁 assets
-│   └── 📁 textures
+│   ├── 📁 img
+│   └── 📁 textures                 # Chứa các ảnh texture các hành tinh và ảnh 6 hướng của skybox
 ├── 📁 include
-│   └── ⚡ Planet.h
+│   ├── ⚡ Camera.h                 # Phần mã nguồn quản lý quay camera
+│   ├── ⚡ Planet.h                 # Phần mã nguồn quản lý về Object chính - Hành tinh
+│   ├── ⚡ SceneManager.h           # Phần mã nguồn chứa các hàm: Tạo hành tinh, Cout thông tin lên Console,...v.v.
+│   ├── ⚡ SkyboxService.h          # Phần mã nguồn ghép ảnh 6 mặt của Skybox vào mô hình
+│   ├── ⚡ TextureUtils.h           # Phẫn mã nguồn chứa hàm hỗ trợ đọc ảnh cho C++
+│   └── ⚡ stb_image.h              # Thư viện hỗ trợ đọc ảnh C++ (nguồn: https://github.com/nothings/stb/blob/master/stb_image.h)
 ├── 📁 packages
-│   ├── 📁 nupengl.core.0.1.0.1
-│   │   └── ⚙️ .signature.p7s
-│   └── 📁 nupengl.core.redist.0.1.0.1
-│       └── ⚙️ .signature.p7s
-├── 📁 src
-│   └── ⚡ main.cpp
+├── 📁 src  # các mã nguồn chi tiết cho các file head (.h) ở trên
+│   ├── ⚡ Camera.cpp
+│   ├── ⚡ Planet.cpp
+│   ├── ⚡ SceneManager.cpp
+│   ├── ⚡ SkyboxService.cpp
+│   ├── ⚡ TextureUtils.cpp
+│   └── ⚡ main.cpp
 ├── ⚙️ .gitattributes
 ├── ⚙️ .gitignore
 ├── 📄 Final.slnx
@@ -84,9 +91,9 @@ Dự án này là tiểu luận cuối kỳ nhằm ứng dụng các lý thuyế
 *Mục tiêu: Biến các khối màu bẹt thành khối 3D có chiều sâu.*
 
 - [x] **Kích hoạt Lighting:** Bật `GL_LIGHTING` và `GL_LIGHT0`.
-- [x] **Nguồn sáng điểm (Point Light):** Đặt đèn tại tọa độ $(0,0,0)$ (Tâm Mặt Trời).
-      - Tạo hiệu ứng mặt hướng về Mặt Trời thì sáng, mặt đối diện thì tối (Ngày/Đêm).
-      -Emission Light:** Làm cho Mặt Trời tự phát sáng rực rỡ (không bị ảnh hưởng bởi bóng tối của chính nó).
+- [x] **Nguồn sáng điểm (Point Light):** Đặt đèn tại tọa độ $(0,0,0)$ (Tâm Mặt Trời)**
+   - Tạo hiệu ứng mặt hướng về Mặt Trời thì sáng, mặt đối diện thì tối (Ngày/Đêm).
+   -Emission Light:** Làm cho Mặt Trời tự phát sáng rực rỡ (không bị ảnh hưởng bởi bóng tối của chính nó).
 - [x] **Cấu hình Material:**
     - Sử dụng `glMaterialfv` thay cho `glColor` (vì Lighting làm vô hiệu hóa Color thông thường).
     - Quy định độ bóng (`GL_SHININESS`) và màu sắc khuếch tán (`GL_DIFFUSE`).
@@ -101,7 +108,7 @@ Dự án này là tiểu luận cuối kỳ nhằm ứng dụng các lý thuyế
     - Dùng `gluSphere` (thay cho `glutSolidSphere`) để có thể trải bản đồ bề mặt (Earth, Mars...) lên khối cầu.
     ( Chưa thể dán phần ảnh vành đai lên vành đai sao thổ)
 - [x] Bổ sung tương tác với chuột - Thu phóng, xuay góc camera quan sát.
-- [x] **Skybox (Vòm sao):** Vẽ một khối lập phương khổng lồ bao quanh vũ trụ, dán ảnh dải ngân hà vào mặt trong.
+- [x] **Skybox (Vòm sao):** Vẽ một khối lập phương khổng lồ bao quanh vũ trụ, dán ảnh vào mặt trong.
 
 ---
 
@@ -111,7 +118,7 @@ Dự án này là tiểu luận cuối kỳ nhằm ứng dụng các lý thuyế
 - [x] **Console Info:**
     - Hiển thị thông tin hướng dẫn sử dụng.
     - Hiển thị thông tin hành tinh đang focus trên màn hình console.
-- [x] **Refactoring:** Tối ưu hóa vòng lặp, giải phóng bộ nhớ (Vector/Texture).
+- [x] **Refactoring:** Tối ưu hóa mã nguồn.
 
 ## 🚀 Hướng Dẫn Chạy (How to Run)
 
